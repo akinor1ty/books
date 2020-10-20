@@ -1,18 +1,21 @@
 import { useState } from "react";
 import classNames from "classnames";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { AllBooks, fetchAllBooks } from "../services/api/books";
 
 export default function Home({ data }: { data: AllBooks }) {
   const topCategories = data.top_category_list;
   const tabs = topCategories.map((topCategory) => topCategory.id_top_category);
   const [tab, setTab] = useState(tabs[0]);
+  const router = useRouter();
 
   const subCategories = topCategories.find(
     (topCategory) => topCategory.id_top_category === tab
   ).sub_category_list;
 
   console.log(data.top_category_list);
+
   return (
     <div className="">
       <div className="flex flex-row flex-no-wrap border">
@@ -53,13 +56,21 @@ export default function Home({ data }: { data: AllBooks }) {
               </div>
               <div className="flex flex-row flex-no-wrap overflow-scroll">
                 {sub.book_list.map((book, index) => {
-                  // console.log("book", book);
+                  const handleClickBook = () => {
+                    router.push(`/books/${book.id_book}`);
+                  };
+
                   return (
                     <span
                       style={{ minWidth: "220px", maxWidth: "220px" }}
                       className="mr-5"
                     >
-                      <img className="shadow" src={book.img_url} alt="book" />
+                      <img
+                        className="shadow cursor-pointer"
+                        src={book.img_url}
+                        alt="book"
+                        onClick={handleClickBook}
+                      />
                     </span>
                   );
                 })}
