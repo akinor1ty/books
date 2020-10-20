@@ -1,15 +1,20 @@
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import classNames from "classnames";
+import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { Book as BookType, fetchAllBooks } from "../../services/api/books";
+import { isFavorite, toggleFavoriteBook } from "../../services/state";
 
 const Book = ({ data }: { data: BookType }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const isListed = useSelector(isFavorite(data.id_book));
   const handleBack = () => router.push("/");
-  const toggleBook = () => {
-    // TODO: Implement this
-  };
+
+  console.log("isListed", isListed);
+  const toggleBook = () => dispatch(toggleFavoriteBook(data.id_book));
 
   return (
     <>
@@ -33,21 +38,28 @@ const Book = ({ data }: { data: BookType }) => {
               出版社：{data.publisher}
             </div>
           </div>
-          <div className=" justify-self-end">
-            <div className="flex  justify-end">
-              <button
-                type="button"
-                className="w-1/2 rounded-md border-2 px-3 py-1 border-red-600 text-red-600 focus:outline-none"
-              >
-                MyBooks追加
-              </button>
-              <button
-                type="button"
-                className="w-1/2 ml-3 rounded-md bg-red-600 text-white px-3 py-1 focus:outline-none"
-              >
-                購入
-              </button>
-            </div>
+          <div className="flex  justify-between">
+            <button
+              type="button"
+              className={classNames(
+                "flex-grow rounded-md border-2 px-3 py-1 focus:outline-none",
+                {
+                  "text-gray-500": isListed,
+                  "border-red-600": !isListed,
+                  "border-gray-500": isListed,
+                  "text-red-600": !isListed,
+                }
+              )}
+              onClick={toggleBook}
+            >
+              {isListed ? "MyBooksから外す" : "MyBooks追加"}
+            </button>
+            <button
+              type="button"
+              className="flex-grow ml-3 rounded-md bg-red-600 text-white px-3 py-1 focus:outline-none"
+            >
+              購入
+            </button>
           </div>
         </div>
       </div>
