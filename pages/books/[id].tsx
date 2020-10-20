@@ -11,9 +11,7 @@ const Book = ({ data }: { data: BookType }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const isListed = useSelector(isFavorite(data.id_book));
-  const handleBack = () => router.push("/");
-
-  console.log("isListed", isListed);
+  const handleBack = () => router.back();
   const toggleBook = () => dispatch(toggleFavoriteBook(data.id_book));
 
   return (
@@ -27,7 +25,9 @@ const Book = ({ data }: { data: BookType }) => {
         書籍紹介
       </div>
       <div className="flex p-5">
-        <img src={data.img_url} className="mx-8" alt="book" />
+        <div className="mx-8" style={{ minWidth: "220px", maxWidth: "220px" }}>
+          <img src={data.img_url} alt="book" />
+        </div>
         <div className="flex flex-col justify-between">
           <div>
             <div className="text-xl font-medium">{data.name_book}</div>

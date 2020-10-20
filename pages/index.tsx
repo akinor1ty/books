@@ -7,21 +7,24 @@ import { AllBooks, fetchAllBooks } from "../services/api/books";
 export default function Home({ data }: { data: AllBooks }) {
   const topCategories = data.top_category_list;
   const tabs = topCategories.map((topCategory) => topCategory.id_top_category);
-  const [tab, setTab] = useState(tabs[0]);
   const router = useRouter();
+  const [tab, setTab] = useState(router.query?.category ?? tabs[0]);
 
   const subCategories = topCategories.find(
     (topCategory) => topCategory.id_top_category === tab
   ).sub_category_list;
-
-  console.log(data.top_category_list);
 
   return (
     <div className="">
       <div className="flex flex-row flex-no-wrap border">
         {data.top_category_list.map((category) => {
           const topCategoryId = category.id_top_category;
-          const handleClickTab = () => setTab(topCategoryId);
+          const handleClickTab = () => {
+            setTab(topCategoryId);
+            router.push({
+              search: `?category=${topCategoryId}`,
+            });
+          };
           const isSelected = tab === topCategoryId;
 
           return (
