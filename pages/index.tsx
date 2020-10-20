@@ -1,65 +1,81 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import { useState } from "react";
+import classNames from "classnames";
+import { GetServerSideProps } from "next";
+import { AllBooks, fetchAllBooks } from "../services/api/books";
 
-export default function Home() {
+export default function Home({ data }: { data: AllBooks }) {
+  const topCategories = data.top_category_list;
+  const tabs = topCategories.map((topCategory) => topCategory.id_top_category);
+  const [tab, setTab] = useState(tabs[0]);
+
+  const subCategories = topCategories.find(
+    (topCategory) => topCategory.id_top_category === tab
+  ).sub_category_list;
+
+  console.log(data.top_category_list);
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <div className="">
+      <div className="flex flex-row flex-no-wrap border">
+        {data.top_category_list.map((category) => {
+          const topCategoryId = category.id_top_category;
+          const handleClickTab = () => setTab(topCategoryId);
+          const isSelected = tab === topCategoryId;
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+          return (
+            <span
+              className={classNames(
+                "text-gray-600 text-center px-6 py-2 cursor-pointer",
+                {
+                  "text-red-600": isSelected,
+                  "border-red-600": isSelected,
+                  "border-b-2": isSelected,
+                }
+              )}
+              onClick={handleClickTab}
+            >
+              {category.name_category}
+            </span>
+          );
+        })}
+      </div>
+      <div className="p-5">
+        {subCategories.map((sub, index) => {
+          // console.log(sub);
+          const isNotFirstSubCategory = index !== 0;
+          return (
+            <>
+              <div
+                className={classNames("text-xl font-bold pb-5", {
+                  "pt-5": isNotFirstSubCategory,
+                })}
+              >
+                {sub.name_category}
+              </div>
+              <div className="flex flex-row flex-no-wrap overflow-scroll">
+                {sub.book_list.map((book, index) => {
+                  // console.log("book", book);
+                  return (
+                    <span
+                      style={{ minWidth: "220px", maxWidth: "220px" }}
+                      className="mr-5"
+                    >
+                      <img className="shadow" src={book.img_url} alt="book" />
+                    </span>
+                  );
+                })}
+              </div>
+            </>
+          );
+        })}
+      </div>
     </div>
-  )
+  );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const data = await fetchAllBooks();
+
+  return {
+    props: { data },
+  };
+};
