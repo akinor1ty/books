@@ -16,7 +16,7 @@ export default function Home({ data }: { data: AllBooks }) {
 
   return (
     <div className="">
-      <div className="flex flex-row flex-no-wrap border">
+      <div className="flex flex-no-wrap overflow-scroll border">
         {data.top_category_list.map((category) => {
           const topCategoryId = category.id_top_category;
           const handleClickTab = () => {
@@ -30,7 +30,7 @@ export default function Home({ data }: { data: AllBooks }) {
           return (
             <span
               className={classNames(
-                "text-gray-600 text-center px-6 py-2 cursor-pointer",
+                "text-gray-600 text-center px-6 py-2 cursor-pointer flex-shrink-0",
                 {
                   "text-red-600": isSelected,
                   "border-red-600": isSelected,
