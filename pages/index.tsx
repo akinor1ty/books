@@ -57,7 +57,7 @@ export default function Home({ data }: { data: AllBooks }) {
               >
                 {sub.name_category}
               </div>
-              <div className="flex flex-row flex-no-wrap overflow-scroll">
+              <div className="flex flex-row overflow-scroll">
                 {sub.book_list.map((book, index) => {
                   const handleClickBook = () => {
                     router.push(`/books/${book.id_book}`);
@@ -65,11 +65,14 @@ export default function Home({ data }: { data: AllBooks }) {
 
                   return (
                     <span
-                      style={{ minWidth: "220px", maxWidth: "220px" }}
                       className="mr-5"
+                      style={{
+                        minWidth: "100px",
+                        // height: "auto",
+                      }}
                     >
                       <img
-                        className="shadow cursor-pointer"
+                        className="shadow cursor-pointer w-full"
                         src={book.img_url}
                         alt="book"
                         onClick={handleClickBook}
